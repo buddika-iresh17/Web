@@ -20,7 +20,7 @@ app.get("/status", (req, res) => {
 
 app.post("/start", (req, res) => {
   if (botProcess) return res.json({ message: "Bot already running" });
-  botProcess = spawn("node", ["index.js"], { cwd: "../MANISHA-MD" });
+  botProcess = spawn("node", ["index.js"], { cwd: "MANISHA-MD" });
   botProcess.stdout.on("data", (data) => {
     const msg = data.toString();
     if (msg.includes("SCAN")) {
@@ -45,7 +45,7 @@ app.post("/stop", (req, res) => {
 
 app.post("/config", (req, res) => {
   const { session_id, prefix, mode } = req.body;
-  const configPath = path.join(__dirname, "../MANISHA-MD/config.js");
+  const configPath = path.join(__dirname, "MANISHA-MD/config.js");
   let content = fs.readFileSync(configPath, "utf8");
 
   content = content.replace(/(session_id\s*[:=]\s*["']).*?(["'])/, `$1${session_id}$2`);

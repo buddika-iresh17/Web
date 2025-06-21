@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MANISHA Panel</title>
+</head>
+<body>
+  <h2>MANISHA Bot Panel</h2>
+  <button onclick="startBot()">Start Bot</button>
+  <button onclick="stopBot()">Stop Bot</button>
+  <p id="status">Status: loading...</p>
+  <h3>QR Output</h3>
+  <pre id="qr">Waiting for QR...</pre>
 
+  <h3>Update Config</h3>
+  <input id="session_id" placeholder="session_id"><br>
+  <input id="prefix" placeholder="prefix"><br>
+  <input id="mode" placeholder="mode"><br>
+  <button onclick="saveConfig()">Save Config</button>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    socket.on("qr", data => {
+      document.getElementById("qr").innerText = data;
+    });
+
+    fetch("/status").then(res => res.json()).then(data => {
+      document.getElementById("status").innerText = data.running ? "Bot is Running" : "Bot is Stopped";
+    });
+
+    function startBot() {
+      fetch("/start", { method: "POST" }).then(() => location.reload());
+    }
+
+    function stopBot() {
+      fetch("/stop", { method: "POST" }).then(() => location.reload());
+    }
+
+    function saveConfig() {
+      const session_id = document.getElementById("session_id").value;
+      const prefix = document.getElementById("prefix").value;
+      const mode = document.getElementById("mode").value;
+      fetch("/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id, prefix, mode })
+      }).then(res => res.json()).then(data => alert(data.message));
+    }
+  </script>
+</body>
+</html>
